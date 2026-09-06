@@ -3,530 +3,711 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox OCS - Official Cadet & Staff Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Officer Candidate School (OCS) Portal</title>
     <style>
-        .bg-military {
-            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
+        :root {
+            --primary: #1b2a47;
+            --secondary: #c5a059;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --danger: #991b1b;
+            --success: #166534;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: #334155;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--secondary);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        nav {
+            background-color: var(--dark);
+            padding: 0.5rem 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        nav button:hover, nav button.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        nav button.hidden {
+            display: none !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .login-box {
+            max-width: 400px;
+            margin: 4rem auto;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: #0f172a;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: var(--dark);
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: var(--danger);
+            border: 1px solid #fca5a5;
+        }
+
+        .alert-success {
+            background-color: #dcfce7;
+            color: var(--success);
+            border: 1px solid #86efac;
+        }
+
+        .table-header-action {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-cadet { background: #e0f2fe; color: #0369a1; }
+        .badge-staff { background: #fef3c7; color: #b45309; }
+        .badge-hr { background: #fce7f3; color: #be185d; }
+
+        .view-panel {
+            display: none;
+        }
+
+        .view-panel.active {
+            display: block;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col">
+<body>
 
-    <!-- Header / Navbar -->
-    <header class="bg-slate-950 border-b border-amber-600/30 text-white sticky top-0 z-50 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="bg-amber-600 p-2 rounded-lg text-slate-950 font-bold">
-                    <i class="fa-solid me-1 fa-shield-halved text-xl"></i> OCS
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-tight tracking-wide text-amber-500">OFFICER CANDIDATE SCHOOL</h1>
-                    <p class="text-xs text-slate-400 uppercase tracking-wider">Motto: "Valor, Integrity, Duty"</p>
-                </div>
-            </div>
-            
-            <div id="user-status" class="hidden items-center space-x-4">
-                <div class="text-right hidden sm:block">
-                    <div id="nav-user-name" class="font-semibold text-sm text-slate-200">User</div>
-                    <div id="nav-user-role" class="text-xs text-amber-500 font-mono">Role</div>
-                </div>
-                <button onclick="logout()" class="px-3 py-1.5 bg-red-900/40 hover:bg-red-800/60 text-red-300 border border-red-700/50 rounded-md text-xs font-semibold transition">
-                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
-                </button>
-            </div>
+    <header>
+        <h1>OFFICER CANDIDATE SCHOOL PORTAL</h1>
+        <div id="userInfo" style="display: none;">
+            <span id="userRoleBadge" class="badge"></span>
+            <button onclick="logout()" style="margin-left: 10px; background: transparent; border: 1px solid white; color: white; padding: 2px 8px; border-radius: 4px; cursor: pointer;">Logout</button>
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 bg-military flex items-center justify-center p-4">
-        
-        <!-- Login Container -->
-        <div id="login-section" class="w-full max-w-md bg-slate-950/90 border border-amber-600/30 rounded-xl shadow-2xl p-6 backdrop-blur-md">
-            <div class="text-center mb-6">
-                <i class="fa-solid fa-award text-4xl text-amber-500 mb-2"></i>
-                <h2 class="text-2xl font-bold text-slate-100">Portal Access</h2>
-                <p class="text-slate-400 text-sm mt-1">Select your portal and enter your credentials</p>
-            </div>
+    <nav id="mainNav" style="display: none;">
+        <button id="navDashboard" class="active" onclick="switchTab('dashboard')">Dashboard</button>
+        <button id="navCadets" onclick="switchTab('cadets')">Cadet Records</button>
+        <button id="navStaff" onclick="switchTab('staff')">Staff Database</button>
+    </nav>
 
-            <!-- Tab Buttons -->
-            <div class="flex border-b border-slate-800 mb-6">
-                <button id="tab-cadet" onclick="switchTab('cadet')" class="flex-1 py-2.5 text-sm font-semibold text-amber-500 border-b-2 border-amber-500 transition">
-                    <i class="fa-solid fa-user-graduate mr-1.5"></i> Cadet Portal
-                </button>
-                <button id="tab-staff" onclick="switchTab('staff')" class="flex-1 py-2.5 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition">
-                    <i class="fa-solid fa-user-shield mr-1.5"></i> OCS Staff Portal
-                </button>
-            </div>
+    <div class="container">
+        <div id="alertBox" class="alert alert-error"></div>
 
-            <!-- Cadet Login Form -->
-            <form id="cadet-form" onsubmit="handleCadetLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Cadet ID / Username</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
-                            <i class="fa-solid fa-id-badge"></i>
-                        </span>
-                        <input type="text" id="cadet-id" required placeholder="e.g. CDT-1001 or CadetUsername" class="w-full pl-10 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:border-amber-500 text-sm">
+        <!-- LOGIN VIEW -->
+        <div id="loginView" class="view-panel active">
+            <div class="card login-box">
+                <h2>Portal Login</h2>
+                <p style="margin-bottom: 1.5rem; color: #64748b; font-size: 0.9rem;">Enter your assigned access passcode to proceed.</p>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="passcode">Access Passcode</label>
+                        <input type="password" id="passcode" placeholder="Enter passcode" required>
                     </div>
-                    <p class="text-xs text-slate-500 mt-1">Demo ID: <span class="font-mono text-amber-400 cursor-pointer" onclick="document.getElementById('cadet-id').value='CDT-1001'">CDT-1001</span></p>
-                </div>
-                <button type="submit" class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-lg transition shadow-md flex items-center justify-center space-x-2">
-                    <span>Access Cadet Records</span>
-                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                </button>
-            </form>
-
-            <!-- Staff Login Form -->
-            <form id="staff-form" onsubmit="handleStaffLogin(event)" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Staff Username / ID</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
-                            <i class="fa-solid fa-user-gear"></i>
-                        </span>
-                        <input type="text" id="staff-id" required placeholder="e.g. Parzival961006 or noob_rg14" class="w-full pl-10 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:border-amber-500 text-sm">
-                    </div>
-                    <p class="text-xs text-slate-500 mt-1">Demo Staff: <span class="font-mono text-amber-400 cursor-pointer" onclick="document.getElementById('staff-id').value='Parzival961006'">Parzival961006</span>, <span class="font-mono text-amber-400 cursor-pointer" onclick="document.getElementById('staff-id').value='noob_rg14'">noob_rg14</span>, <span class="font-mono text-amber-400 cursor-pointer" onclick="document.getElementById('staff-id').value='castomer00'">castomer00</span></p>
-                </div>
-                <button type="submit" class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-lg transition shadow-md flex items-center justify-center space-x-2">
-                    <span>Access Staff Database</span>
-                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                </button>
-            </form>
-        </div>
-
-        <!-- Cadet Dashboard -->
-        <div id="cadet-dashboard" class="hidden w-full max-w-6xl space-y-6">
-            <!-- Top Banner -->
-            <div class="bg-slate-950/90 border border-amber-600/30 rounded-xl p-6 backdrop-blur-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div class="flex items-center space-x-4">
-                    <div class="w-16 h-16 rounded-full bg-amber-600/20 border-2 border-amber-500 flex items-center justify-center text-amber-500 text-2xl font-bold">
-                        <i class="fa-solid fa-user-graduate"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <h2 id="cadet-name" class="text-2xl font-bold text-white">Cadet Name</h2>
-                            <span id="cadet-status-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-700">Active</span>
-                        </div>
-                        <p class="text-slate-400 text-sm">ID: <span id="cadet-id-display" class="font-mono text-slate-200"></span> | Class: <span id="cadet-class" class="text-slate-200"></span></p>
-                    </div>
-                </div>
-                <div class="flex space-x-6 text-center border-t md:border-t-0 border-slate-800 pt-4 md:pt-0 w-full md:w-auto justify-around">
-                    <div>
-                        <div class="text-xs text-slate-400 uppercase">Overall GPA / Score</div>
-                        <div id="cadet-gpa" class="text-2xl font-bold text-amber-500">92%</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-400 uppercase">Phase Progress</div>
-                        <div id="cadet-phase" class="text-2xl font-bold text-blue-400">Phase 3</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-400 uppercase">Demerits / Strikes</div>
-                        <div id="cadet-demerits" class="text-2xl font-bold text-emerald-400">0</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dashboard Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Academic Grades -->
-                <div class="md:col-span-2 bg-slate-950/90 border border-slate-800 rounded-xl p-6 backdrop-blur-md">
-                    <h3 class="text-lg font-bold text-amber-500 mb-4 flex items-center">
-                        <i class="fa-solid fa-book-bookmark mr-2"></i> Academic Performance & Assessment
-                    </h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-slate-300">
-                            <thead class="bg-slate-900 text-xs uppercase text-slate-400 border-b border-slate-800">
-                                <tr>
-                                    <th class="p-3">Module / Subject</th>
-                                    <th class="p-3">Score</th>
-                                    <th class="p-3">Grade</th>
-                                    <th class="p-3">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cadet-grades-tbody" class="divide-y divide-slate-800/50">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Info & Status -->
-                <div class="space-y-6">
-                    <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-6 backdrop-blur-md">
-                        <h3 class="text-lg font-bold text-amber-500 mb-4 flex items-center">
-                            <i class="fa-solid fa-circle-info mr-2"></i> Official Information
-                        </h3>
-                        <div class="space-y-3 text-sm">
-                            <div class="flex justify-between border-b border-slate-800/80 pb-2">
-                                <span class="text-slate-400">Platoon:</span>
-                                <span id="cadet-platoon" class="font-medium text-slate-200">1st Platoon</span>
-                            </div>
-                            <div class="flex justify-between border-b border-slate-800/80 pb-2">
-                                <span class="text-slate-400">Instructor:</span>
-                                <span id="cadet-instructor" class="font-medium text-slate-200">COL castomer00</span>
-                            </div>
-                            <div class="flex justify-between border-b border-slate-800/80 pb-2">
-                                <span class="text-slate-400">Enlistment Date:</span>
-                                <span id="cadet-enlistment" class="font-medium text-slate-200">2026-02-10</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-slate-400">Next Evaluation:</span>
-                                <span class="font-medium text-amber-400">Saturday Drill</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-6 backdrop-blur-md">
-                        <h3 class="text-lg font-bold text-amber-500 mb-3 flex items-center">
-                            <i class="fa-solid fa-scroll mr-2"></i> Commandant Notes
-                        </h3>
-                        <p id="cadet-notes" class="text-xs text-slate-300 italic bg-slate-900 p-3 rounded-lg border border-slate-800">
-                            "Demonstrates solid drill execution and standard military courtesy. Needs minor improvement in radio protocol exam."
-                        </p>
-                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Authenticate</button>
+                </form>
+                <div style="margin-top: 1.5rem; font-size: 0.8rem; color: #94a3b8; text-align: left;">
+                    <strong>Demo Credentials:</strong><br>
+                    • Cadet Access: <code>CADET-2026</code><br>
+                    • Staff Access: <code>OCS-2026-TFA</code><br>
+                    • HR Access: <code>HR-2026-TFA</code>
                 </div>
             </div>
         </div>
 
-        <!-- Staff Dashboard -->
-        <div id="staff-dashboard" class="hidden w-full max-w-7xl space-y-6">
-            <!-- Staff Top Card -->
-            <div class="bg-slate-950/90 border border-amber-600/30 rounded-xl p-6 backdrop-blur-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div class="flex items-center space-x-4">
-                    <div class="w-16 h-16 rounded-full bg-amber-500/20 border-2 border-amber-500 flex items-center justify-center text-amber-500 text-2xl font-bold">
-                        <i class="fa-solid fa-user-shield"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span id="staff-rank" class="px-2 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40">COL</span>
-                            <h2 id="staff-name" class="text-2xl font-bold text-white">Staff Member</h2>
-                            <span id="staff-status" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-700">ACTIVE</span>
-                        </div>
-                        <p id="staff-position" class="text-slate-400 text-sm">Position: Office of Personnel and Standards</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full md:w-auto text-center">
-                    <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                        <div class="text-xs text-slate-400 uppercase">Service Length</div>
-                        <div id="staff-service" class="text-lg font-bold text-slate-200">15 Days</div>
-                    </div>
-                    <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                        <div class="text-xs text-slate-400 uppercase">Weekly Points</div>
-                        <div id="staff-weekly-points" class="text-lg font-bold text-amber-400">0</div>
-                    </div>
-                    <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                        <div class="text-xs text-slate-400 uppercase">Warnings / Strikes</div>
-                        <div id="staff-discipline" class="text-lg font-bold text-emerald-400">0 / 0</div>
-                    </div>
-                    <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-                        <div class="text-xs text-slate-400 uppercase">Quota Status</div>
-                        <div id="staff-quota" class="text-lg font-bold text-amber-500">COMPLETE</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Staff Database Navigation Tabs -->
-            <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-4 backdrop-blur-md">
-                <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-3 mb-4">
-                    <button onclick="switchStaffTab('command')" id="stab-command" class="px-4 py-2 text-xs font-bold rounded-lg bg-amber-600 text-slate-950 shadow">OCS Command Staff</button>
-                    <button onclick="switchStaffTab('ops')" id="stab-ops" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-900 text-slate-400 hover:text-white">OPS (Personnel & Standards)</button>
-                    <button onclick="switchStaffTab('ocdf')" id="stab-ocdf" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-900 text-slate-400 hover:text-white">OCDF (Faculty)</button>
-                    <button onclick="switchStaffTab('gdh')" id="stab-gdh" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-900 text-slate-400 hover:text-white">Guardia De Honor</button>
-                    <button onclick="switchStaffTab('loa')" id="stab-loa" class="px-4 py-2 text-xs font-bold rounded-lg bg-slate-900 text-slate-400 hover:text-white">LOA Logs</button>
-                </div>
-
-                <!-- Database Content Views -->
-                <div id="staff-table-container" class="overflow-x-auto">
-                    <!-- Table rendered dynamically -->
-                </div>
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboardView" class="view-panel">
+            <div class="card">
+                <h2>Welcome to the OCS Command Portal</h2>
+                <p style="margin-top: 0.5rem;">Select a section from the navigation bar above to manage or view records.</p>
             </div>
         </div>
 
-    </main>
+        <!-- CADET RECORDS VIEW -->
+        <div id="cadetsView" class="view-panel">
+            <div class="card">
+                <div class="table-header-action">
+                    <h2>Cadet Academic & Training Records</h2>
+                    <button id="addCadetBtn" class="btn btn-secondary btn-sm" onclick="openCadetModal()">+ Add New Cadet</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cadet ID</th>
+                            <th>Name</th>
+                            <th>Class/Platoon</th>
+                            <th>Academic Grade</th>
+                            <th>Status</th>
+                            <th class="action-col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cadetTableBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <!-- Footer -->
-    <footer class="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
-        <p>Roblox Officer Candidate School &copy; 2026. All Rights Reserved.</p>
-        <p class="mt-1">HQ Command: LTGEN Parzival961006 | Program Director: MGEN odatGamerYt</p>
-    </footer>
-
-    <script>
-        // Data derived from provided database context
-        const staffDatabase = {
-            command: [
-                { position: "Commanding General", username: "Parzival961006", rank: "LTGEN", service: "31 DAYS", status: "ACTIVE", weeklyPoints: 0, quota: "INCOMPLETE", warnings: 0, strikes: 0 },
-                { position: "Program Director", username: "odatGamerYt", rank: "MGEN", service: "23 DAYS", status: "ACTIVE", weeklyPoints: 0, quota: "INCOMPLETE", warnings: 0, strikes: 0 },
-                { position: "Program Deputy Director", username: "Kiritosenato123", rank: "BGEN", service: "23 DAYS", status: "ACTIVE", weeklyPoints: 0, quota: "INCOMPLETE", warnings: 0, strikes: 0 },
-                { position: "Assistant Deputy Director", username: "Rip_banana003", rank: "COL", service: "2 DAYS", status: "ACTIVE", weeklyPoints: 0, quota: "INCOMPLETE", warnings: 0, strikes: 0 }
-            ],
-            ops: [
-                { position: "Chief (C-OPS)", username: "noob_rg14", rank: "COL", service: "15 DAYS", status: "SEMI-ACTIVE", weeklyPoints: 0, quota: "INCOMPLETE", warnings: 0, strikes: 0 },
-                { position: "Deputy Chief (DC-OPS)", username: "Yeyemode9192_1", rank: "LTCOL", service: "9 DAYS", status: "SEMI-ACTIVE", weeklyPoints: 0, quota: "INCOMPLETE", warnings: 0, strikes: 0 },
-                { position: "Head Standards Officer", username: "VACANT", rank: "MAJ", service: "0 DAYS", status: "VACANT", weeklyPoints: 0, quota: "N/A", warnings: 0, strikes: 0 }
-            ],
-            ocdf: [
-                { position: "Dean of Faculty", username: "castomer00", rank: "COL", service: "15 DAYS", status: "SEMI-ACTIVE", weeklyPoints: 0, quota: "INCOMPLETE", warnings: 0, strikes: 0 },
-                { position: "Deputy Dean", username: "Persus_Nicholas", rank: "LTCOL", service: "2 DAYS", status: "SEMI-ACTIVE", weeklyPoints: 0, quota: "INCOMPLETE", warnings: 0, strikes: 0 }
-            ],
-            gdh: [
-                { position: "Commandant (C-GDH)", username: "SHELLOGAMINGFROMYT", rank: "COL", service: "15 DAYS", status: "SEMI-ACTIVE", weeklyPoints: 0, quota: "INCOMPLETE", warnings: 0, strikes: 0 },
-                { position: "Deputy Commandant", username: "VACANT", rank: "LTCOL", service: "0 DAYS", status: "VACANT", weeklyPoints: 0, quota: "N/A", warnings: 0, strikes: 0 }
-            ],
-            loa: [
-                { logDate: "2026-03-01", username: "SampleStaff", office: "OCDF", position: "Instructor", rank: "2LT", startDate: "2026-03-05", endDate: "2026-03-12", reason: "Exams", status: "APPROVED" }
-            ]
-        };
-
-        const cadetDatabase = {
-            "CDT-1001": {
-                name: "Cadet_JohnRoblox",
-                class: "Class 2026-A",
-                status: "ACTIVE",
-                gpa: "94.5%",
-                phase: "Phase 3",
-                demerits: 0,
-                platoon: "Alpha Platoon",
-                instructor: "COL castomer00",
-                enlistment: "2026-02-10",
-                notes: "Exemplary performance in military leadership and drill commands. Maintained high standards throughout Phase 1 & 2.",
-                grades: [
-                    { subject: "Phase 1: General Military Orientation", score: "96/100", grade: "A", status: "PASSED" },
-                    { subject: "Phase 2: Drill, Ceremonies & Commands", score: "92/100", grade: "A-", status: "PASSED" },
-                    { subject: "Phase 3: Tactics & Field Supervision", score: "95/100", grade: "A", status: "IN PROGRESS" },
-                    { subject: "OCS Protocol & Code of Conduct Exam", score: "95/100", grade: "A", status: "PASSED" }
-                ]
-            }
-        };
-
-        let currentActiveStaffTab = 'command';
-
-        function switchTab(type) {
-            const cadetTab = document.getElementById('tab-cadet');
-            const staffTab = document.getElementById('tab-staff');
-            const cadetForm = document.getElementById('cadet-form');
-            const staffForm = document.getElementById('staff-form');
-
-            if (type === 'cadet') {
-                cadetTab.className = "flex-1 py-2.5 text-sm font-semibold text-amber-500 border-b-2 border-amber-500 transition";
-                staffTab.className = "flex-1 py-2.5 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition";
-                cadetForm.classList.remove('hidden');
-                staffForm.classList.add('hidden');
-            } else {
-                staffTab.className = "flex-1 py-2.5 text-sm font-semibold text-amber-500 border-b-2 border-amber-500 transition";
-                cadetTab.className = "flex-1 py-2.5 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition";
-                staffForm.classList.remove('hidden');
-                cadetForm.classList.add('hidden');
-            }
-        }
-
-        function handleCadetLogin(e) {
-            e.preventDefault();
-            const id = document.getElementById('cadet-id').value.trim();
-            const cadet = cadetDatabase[id] || {
-                name: id,
-                class: "Class 2026-B",
-                status: "ACTIVE",
-                gpa: "88.0%",
-                phase: "Phase 1",
-                demerits: 0,
-                platoon: "Bravo Platoon",
-                instructor: "COL castomer00",
-                enlistment: "2026-03-01",
-                notes: "Newly admitted cadet. Complete Phase 1 orientation and basic drill assessments.",
-                grades: [
-                    { subject: "Phase 1: General Orientation", score: "88/100", grade: "B+", status: "PASSED" },
-                    { subject: "Basic Protocol Quiz", score: "88/100", grade: "B+", status: "PASSED" }
-                ]
-            };
-
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('cadet-dashboard').classList.remove('hidden');
-
-            document.getElementById('user-status').classList.remove('hidden');
-            document.getElementById('user-status').classList.add('flex');
-            document.getElementById('nav-user-name').innerText = cadet.name;
-            document.getElementById('nav-user-role').innerText = "OFFICER CANDIDATE";
-
-            document.getElementById('cadet-name').innerText = cadet.name;
-            document.getElementById('cadet-id-display').innerText = id;
-            document.getElementById('cadet-class').innerText = cadet.class;
-            document.getElementById('cadet-gpa').innerText = cadet.gpa;
-            document.getElementById('cadet-phase').innerText = cadet.phase;
-            document.getElementById('cadet-demerits').innerText = cadet.demerits;
-            document.getElementById('cadet-platoon').innerText = cadet.platoon;
-            document.getElementById('cadet-instructor').innerText = cadet.instructor;
-            document.getElementById('cadet-enlistment').innerText = cadet.enlistment;
-            document.getElementById('cadet-notes').innerText = `"${cadet.notes}"`;
-
-            const tbody = document.getElementById('cadet-grades-tbody');
-            tbody.innerHTML = cadet.grades.map(g => `
-                <tr class="hover:bg-slate-900/50">
-                    <td class="p-3 font-medium text-slate-200">${g.subject}</td>
-                    <td class="p-3 font-mono">${g.score}</td>
-                    <td class="p-3 font-bold text-amber-400">${g.grade}</td>
-                    <td class="p-3">
-                        <span class="px-2 py-0.5 text-xs rounded ${g.status === 'PASSED' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-blue-950 text-blue-400 border border-blue-800'}">${g.status}</span>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function handleStaffLogin(e) {
-            e.preventDefault();
-            const staffId = document.getElementById('staff-id').value.trim();
-            
-            // Search for staff in database
-            let foundStaff = null;
-            let foundDept = "OCS Administration";
-
-            for (const [dept, list] of Object.entries(staffDatabase)) {
-                if (Array.isArray(list)) {
-                    const match = list.find(s => s.username && s.username.toLowerCase() === staffId.toLowerCase());
-                    if (match) {
-                        foundStaff = match;
-                        foundDept = dept.toUpperCase();
-                        break;
-                    }
-                }
-            }
-
-            if (!foundStaff) {
-                foundStaff = {
-                    position: "Staff Officer",
-                    username: staffId,
-                    rank: "OFFICER",
-                    service: "1 DAY",
-                    status: "ACTIVE",
-                    weeklyPoints: 0,
-                    quota: "COMPLETE",
-                    warnings: 0,
-                    strikes: 0
-                };
-            }
-
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('staff-dashboard').classList.remove('hidden');
-
-            document.getElementById('user-status').classList.remove('hidden');
-            document.getElementById('user-status').classList.add('flex');
-            document.getElementById('nav-user-name').innerText = foundStaff.username;
-            document.getElementById('nav-user-role').innerText = `${foundStaff.rank} | STAFF`;
-
-            document.getElementById('staff-name').innerText = foundStaff.username;
-            document.getElementById('staff-rank').innerText = foundStaff.rank;
-            document.getElementById('staff-status').innerText = foundStaff.status;
-            document.getElementById('staff-position').innerText = `Position: ${foundStaff.position} (${foundDept})`;
-            document.getElementById('staff-service').innerText = foundStaff.service;
-            document.getElementById('staff-weekly-points').innerText = foundStaff.weeklyPoints;
-            document.getElementById('staff-discipline').innerText = `${foundStaff.warnings} / ${foundStaff.strikes}`;
-            document.getElementById('staff-quota').innerText = foundStaff.quota;
-
-            renderStaffTable('command');
-        }
-
-        function switchStaffTab(tabKey) {
-            currentActiveStaffTab = tabKey;
-            const tabs = ['command', 'ops', 'ocdf', 'gdh', 'loa'];
-            tabs.forEach(t => {
-                const btn = document.getElementById(`stab-${t}`);
-                if (t === tabKey) {
-                    btn.className = "px-4 py-2 text-xs font-bold rounded-lg bg-amber-600 text-slate-950 shadow";
-                } else {
-                    btn.className = "px-4 py-2 text-xs font-bold rounded-lg bg-slate-900 text-slate-400 hover:text-white";
-                }
-            });
-            renderStaffTable(tabKey);
-        }
-
-        function renderStaffTable(tabKey) {
-            const container = document.getElementById('staff-table-container');
-            const data = staffDatabase[tabKey] || [];
-
-            if (tabKey === 'loa') {
-                container.innerHTML = `
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-900 text-xs uppercase text-slate-400 border-b border-slate-800">
+        <!-- STAFF DATABASE VIEW -->
+        <div id="staffView" class="view-panel">
+            <div class="card">
+                <div class="table-header-action">
+                    <h2>Staff Database</h2>
+                    <button id="addStaffBtn" class="btn btn-secondary btn-sm" onclick="openStaffModal()">+ Add New Staff</button>
+                </div>
+                <div id="staffContent">
+                    <table>
+                        <thead>
                             <tr>
-                                <th class="p-3">Log Date</th>
-                                <th class="p-3">Username</th>
-                                <th class="p-3">Office</th>
-                                <th class="p-3">Position</th>
-                                <th class="p-3">Rank</th>
-                                <th class="p-3">Duration</th>
-                                <th class="p-3">Reason</th>
-                                <th class="p-3">Status</th>
+                                <th>Staff ID</th>
+                                <th>Name</th>
+                                <th>Rank</th>
+                                <th>Department</th>
+                                <th>Role</th>
+                                <th class="hr-action-col">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-800/50">
-                            ${data.length === 0 ? `<tr><td colspan="8" class="p-4 text-center text-slate-500">No active LOA logs found.</td></tr>` : 
-                            data.map(item => `
-                                <tr class="hover:bg-slate-900/50">
-                                    <td class="p-3 font-mono text-xs">${item.logDate}</td>
-                                    <td class="p-3 font-bold text-slate-200">${item.username}</td>
-                                    <td class="p-3">${item.office}</td>
-                                    <td class="p-3">${item.position}</td>
-                                    <td class="p-3 font-semibold text-amber-400">${item.rank}</td>
-                                    <td class="p-3 text-xs">${item.startDate} to ${item.endDate}</td>
-                                    <td class="p-3 text-xs text-slate-400">${item.reason}</td>
-                                    <td class="p-3"><span class="px-2 py-0.5 text-xs rounded bg-emerald-950 text-emerald-400 border border-emerald-800">${item.status}</span></td>
-                                </tr>
-                            `).join('')}
+                        <tbody id="staffTableBody">
+                            <!-- Populated by JavaScript -->
                         </tbody>
                     </table>
-                `;
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CADET MODAL FORM -->
+    <div id="cadetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="cadetModalTitle">Add Cadet Record</h3>
+                <button class="close-btn" onclick="closeModal('cadetModal')">&times;</button>
+            </div>
+            <form onsubmit="saveCadet(event)">
+                <input type="hidden" id="cadetEditId">
+                <div class="form-group">
+                    <label for="cadetId">Cadet ID</label>
+                    <input type="text" id="cadetId" required placeholder="e.g. C-104">
+                </div>
+                <div class="form-group">
+                    <label for="cadetName">Full Name</label>
+                    <input type="text" id="cadetName" required placeholder="e.g. John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="cadetPlatoon">Platoon</label>
+                    <select id="cadetPlatoon">
+                        <option value="Alpha">Alpha</option>
+                        <option value="Bravo">Bravo</option>
+                        <option value="Charlie">Charlie</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cadetGrade">Academic Grade</label>
+                    <input type="text" id="cadetGrade" required placeholder="e.g. 90%">
+                </div>
+                <div class="form-group">
+                    <label for="cadetStatus">Status</label>
+                    <select id="cadetStatus">
+                        <option value="Active">Active</option>
+                        <option value="On Leave">On Leave</option>
+                        <option value="Graduated">Graduated</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('cadetModal')">Cancel</button>
+                    <button type="submit" class="btn btn-sm">Save Cadet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- STAFF MODAL FORM (HR Only) -->
+    <div id="staffModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="staffModalTitle">Add Staff Record</h3>
+                <button class="close-btn" onclick="closeModal('staffModal')">&times;</button>
+            </div>
+            <form onsubmit="saveStaff(event)">
+                <input type="hidden" id="staffEditId">
+                <div class="form-group">
+                    <label for="staffId">Staff ID</label>
+                    <input type="text" id="staffId" required placeholder="e.g. S-04">
+                </div>
+                <div class="form-group">
+                    <label for="staffName">Full Name</label>
+                    <input type="text" id="staffName" required placeholder="e.g. Capt. Smith">
+                </div>
+                <div class="form-group">
+                    <label for="staffRank">Rank</label>
+                    <input type="text" id="staffRank" required placeholder="e.g. Captain">
+                </div>
+                <div class="form-group">
+                    <label for="staffDept">Department</label>
+                    <input type="text" id="staffDept" required placeholder="e.g. Tactical Training">
+                </div>
+                <div class="form-group">
+                    <label for="staffRole">Role</label>
+                    <input type="text" id="staffRole" required placeholder="e.g. Instructor">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('staffModal')">Cancel</button>
+                    <button type="submit" class="btn btn-sm">Save Staff</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Stores
+        const currentUser = {
+            authenticated: false,
+            role: null // 'cadet', 'staff', or 'hr'
+        };
+
+        let cadetData = [
+            { id: "C-101", name: "John Doe", platoon: "Alpha", grade: "92%", status: "Active" },
+            { id: "C-102", name: "Jane Smith", platoon: "Alpha", grade: "88%", status: "Active" },
+            { id: "C-103", name: "Alex Mercer", platoon: "Bravo", grade: "95%", status: "Active" }
+        ];
+
+        let staffData = [
+            { id: "S-01", name: "Capt. Miller", rank: "Captain", department: "Tactical Training", role: "Instructor" },
+            { id: "S-02", name: "Maj. Vance", rank: "Major", department: "Commandant Office", role: "Executive Officer" },
+            { id: "S-03", name: "Lt. Davis", rank: "First Lieutenant", department: "Human Resources", role: "HR Specialist" }
+        ];
+
+        // Authentication Handler
+        function handleLogin(event) {
+            event.preventDefault();
+            const inputCode = document.getElementById('passcode').value.trim();
+
+            if (inputCode === 'CADET-2026') {
+                currentUser.authenticated = true;
+                currentUser.role = 'cadet';
+            } else if (inputCode === 'OCS-2026-TFA') {
+                currentUser.authenticated = true;
+                currentUser.role = 'staff';
+            } else if (inputCode === 'HR-2026-TFA') {
+                currentUser.authenticated = true;
+                currentUser.role = 'hr';
+            } else {
+                showAlert("Invalid passcode. Access denied.");
                 return;
             }
 
-            container.innerHTML = `
-                <table class="w-full text-left text-sm text-slate-300">
-                    <thead class="bg-slate-900 text-xs uppercase text-slate-400 border-b border-slate-800">
-                        <tr>
-                            <th class="p-3">Position</th>
-                            <th class="p-3">Rank</th>
-                            <th class="p-3">Username</th>
-                            <th class="p-3">Service</th>
-                            <th class="p-3">Status</th>
-                            <th class="p-3">Weekly Points</th>
-                            <th class="p-3">Quota</th>
-                            <th class="p-3">Warnings/Strikes</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-800/50">
-                        ${data.map(item => `
-                            <tr class="hover:bg-slate-900/50">
-                                <td class="p-3 font-medium text-slate-200">${item.position}</td>
-                                <td class="p-3 font-bold text-amber-500">${item.rank}</td>
-                                <td class="p-3 font-semibold text-white">${item.username}</td>
-                                <td class="p-3 text-xs text-slate-400">${item.service}</td>
-                                <td class="p-3">
-                                    <span class="px-2 py-0.5 text-xs rounded ${
-                                        item.status === 'ACTIVE' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
-                                        item.status === 'SEMI-ACTIVE' ? 'bg-amber-950 text-amber-400 border border-amber-800' :
-                                        'bg-slate-800 text-slate-400 border border-slate-700'
-                                    }">${item.status}</span>
-                                </td>
-                                <td class="p-3 font-mono">${item.weeklyPoints}</td>
-                                <td class="p-3 text-xs font-semibold ${item.quota === 'COMPLETE' ? 'text-emerald-400' : 'text-amber-400'}">${item.quota}</td>
-                                <td class="p-3 text-xs">${item.warnings} / ${item.strikes}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
+            document.getElementById('passcode').value = '';
+            hideAlert();
+            setupPortalView();
         }
 
         function logout() {
-            document.getElementById('cadet-dashboard').classList.add('hidden');
-            document.getElementById('staff-dashboard').classList.add('hidden');
-            document.getElementById('user-status').classList.add('hidden');
-            document.getElementById('user-status').classList.remove('flex');
-            document.getElementById('login-section').classList.remove('hidden');
+            currentUser.authenticated = false;
+            currentUser.role = null;
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('mainNav').style.display = 'none';
+            switchTab('loginView', true);
+        }
+
+        // Setup View based on Role Permissions
+        function setupPortalView() {
+            document.getElementById('userInfo').style.display = 'block';
+            document.getElementById('mainNav').style.display = 'flex';
+
+            const roleBadge = document.getElementById('userRoleBadge');
+            const navStaff = document.getElementById('navStaff');
+            const addCadetBtn = document.getElementById('addCadetBtn');
+            const addStaffBtn = document.getElementById('addStaffBtn');
+
+            roleBadge.textContent = currentUser.role.toUpperCase();
+            roleBadge.className = `badge badge-${currentUser.role}`;
+
+            // Enforce Staff Database navigation visibility
+            if (currentUser.role === 'cadet') {
+                navStaff.classList.add('hidden');
+                addCadetBtn.style.display = 'none';
+            } else {
+                navStaff.classList.remove('hidden');
+                addCadetBtn.style.display = 'inline-block'; // Staff & HR can add cadets
+            }
+
+            // HR only can add staff records
+            if (currentUser.role === 'hr') {
+                addStaffBtn.style.display = 'inline-block';
+            } else {
+                addStaffBtn.style.display = 'none';
+            }
+
+            renderTables();
+            switchTab('dashboard');
+        }
+
+        // Tab Switcher
+        function switchTab(tabName, isDirectView = false) {
+            const panels = document.querySelectorAll('.view-panel');
+            panels.forEach(p => p.classList.remove('active'));
+
+            const navButtons = document.querySelectorAll('nav button');
+            navButtons.forEach(b => b.classList.remove('active'));
+
+            if (isDirectView) {
+                document.getElementById(tabName).classList.add('active');
+                return;
+            }
+
+            if (tabName === 'staff' && currentUser.role === 'cadet') {
+                showAlert("SECURITY ALERT: Cadets are strictly prohibited from accessing the Staff Database.");
+                switchTab('dashboard');
+                return;
+            }
+
+            document.getElementById(tabName + 'View').classList.add('active');
+            
+            const activeNav = document.getElementById('nav' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+            if (activeNav) activeNav.classList.add('active');
+        }
+
+        // Render Tables
+        function renderTables() {
+            const canManageCadets = currentUser.role === 'staff' || currentUser.role === 'hr';
+            const canManageStaff = currentUser.role === 'hr';
+
+            // Cadet Table
+            const cadetBody = document.getElementById('cadetTableBody');
+            cadetBody.innerHTML = cadetData.map(c => `
+                <tr>
+                    <td>${c.id}</td>
+                    <td>${c.name}</td>
+                    <td>${c.platoon}</td>
+                    <td>${c.grade}</td>
+                    <td><span class="badge" style="background:#dcfce7;color:#166534;">${c.status}</span></td>
+                    <td class="action-col">
+                        ${canManageCadets ? `<button class="btn btn-secondary btn-sm" onclick="openCadetModal('${c.id}')">Edit</button>` : '<em>Read Only</em>'}
+                    </td>
+                </tr>
+            `).join('');
+
+            // Staff Table
+            const staffBody = document.getElementById('staffTableBody');
+            if (currentUser.role !== 'cadet') {
+                staffBody.innerHTML = staffData.map(s => `
+                    <tr>
+                        <td>${s.id}</td>
+                        <td>${s.name}</td>
+                        <td>${s.rank}</td>
+                        <td>${s.department}</td>
+                        <td>${s.role}</td>
+                        <td class="hr-action-col">
+                            ${canManageStaff ? `<button class="btn btn-secondary btn-sm" onclick="openStaffModal('${s.id}')">Edit</button>` : '<em>Read Only</em>'}
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                staffBody.innerHTML = '';
+            }
+        }
+
+        // Modal Controls
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Cadet Modal CRUD Handlers
+        function openCadetModal(id = null) {
+            const modal = document.getElementById('cadetModal');
+            const title = document.getElementById('cadetModalTitle');
+            const editId = document.getElementById('cadetEditId');
+
+            if (id) {
+                const target = cadetData.find(c => c.id === id);
+                if (!target) return;
+                title.textContent = "Edit Cadet Record";
+                editId.value = id;
+                document.getElementById('cadetId').value = target.id;
+                document.getElementById('cadetId').disabled = true;
+                document.getElementById('cadetName').value = target.name;
+                document.getElementById('cadetPlatoon').value = target.platoon;
+                document.getElementById('cadetGrade').value = target.grade;
+                document.getElementById('cadetStatus').value = target.status;
+            } else {
+                title.textContent = "Add Cadet Record";
+                editId.value = "";
+                document.getElementById('cadetId').disabled = false;
+                document.getElementById('cadetId').value = "";
+                document.getElementById('cadetName').value = "";
+                document.getElementById('cadetPlatoon').value = "Alpha";
+                document.getElementById('cadetGrade').value = "";
+                document.getElementById('cadetStatus').value = "Active";
+            }
+            modal.classList.add('active');
+        }
+
+        function saveCadet(event) {
+            event.preventDefault();
+            const editId = document.getElementById('cadetEditId').value;
+            const id = document.getElementById('cadetId').value.trim();
+            const name = document.getElementById('cadetName').value.trim();
+            const platoon = document.getElementById('cadetPlatoon').value;
+            const grade = document.getElementById('cadetGrade').value.trim();
+            const status = document.getElementById('cadetStatus').value;
+
+            if (editId) {
+                const index = cadetData.findIndex(c => c.id === editId);
+                if (index !== -1) {
+                    cadetData[index] = { id: editId, name, platoon, grade, status };
+                }
+            } else {
+                if (cadetData.some(c => c.id === id)) {
+                    alert("Cadet ID already exists!");
+                    return;
+                }
+                cadetData.push({ id, name, platoon, grade, status });
+            }
+
+            closeModal('cadetModal');
+            renderTables();
+        }
+
+        // Staff Modal CRUD Handlers
+        function openStaffModal(id = null) {
+            const modal = document.getElementById('staffModal');
+            const title = document.getElementById('staffModalTitle');
+            const editId = document.getElementById('staffEditId');
+
+            if (id) {
+                const target = staffData.find(s => s.id === id);
+                if (!target) return;
+                title.textContent = "Edit Staff Record";
+                editId.value = id;
+                document.getElementById('staffId').value = target.id;
+                document.getElementById('staffId').disabled = true;
+                document.getElementById('staffName').value = target.name;
+                document.getElementById('staffRank').value = target.rank;
+                document.getElementById('staffDept').value = target.department;
+                document.getElementById('staffRole').value = target.role;
+            } else {
+                title.textContent = "Add Staff Record";
+                editId.value = "";
+                document.getElementById('staffId').disabled = false;
+                document.getElementById('staffId').value = "";
+                document.getElementById('staffName').value = "";
+                document.getElementById('staffRank').value = "";
+                document.getElementById('staffDept').value = "";
+                document.getElementById('staffRole').value = "";
+            }
+            modal.classList.add('active');
+        }
+
+        function saveStaff(event) {
+            event.preventDefault();
+            const editId = document.getElementById('staffEditId').value;
+            const id = document.getElementById('staffId').value.trim();
+            const name = document.getElementById('staffName').value.trim();
+            const rank = document.getElementById('staffRank').value.trim();
+            const department = document.getElementById('staffDept').value.trim();
+            const role = document.getElementById('staffRole').value.trim();
+
+            if (editId) {
+                const index = staffData.findIndex(s => s.id === editId);
+                if (index !== -1) {
+                    staffData[index] = { id: editId, name, rank, department, role };
+                }
+            } else {
+                if (staffData.some(s => s.id === id)) {
+                    alert("Staff ID already exists!");
+                    return;
+                }
+                staffData.push({ id, name, rank, department, role });
+            }
+
+            closeModal('staffModal');
+            renderTables();
+        }
+
+        function showAlert(msg) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = msg;
+            alertBox.style.display = 'block';
+        }
+
+        function hideAlert() {
+            document.getElementById('alertBox').style.display = 'none';
         }
     </script>
 </body>
