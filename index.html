@@ -505,15 +505,15 @@
                                 <td class="p-3 font-semibold text-white">${item.username}</td>
                                 <td class="p-3 text-xs text-slate-400">${item.service}</td>
                                 <td class="p-3">
-                                    <span class="px-2 py-0.5 text-xs rounded ${item.status === 'ACTIVE' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : item.status === 'SEMI-ACTIVE' ? 'bg-amber-950 text-amber-400 border border-amber-800' : 'bg-slate-800 text-slate-400'}">
-                                        ${item.status}
-                                    </span>
+                                    <span class="px-2 py-0.5 text-xs rounded ${
+                                        item.status === 'ACTIVE' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
+                                        item.status === 'SEMI-ACTIVE' ? 'bg-amber-950 text-amber-400 border border-amber-800' :
+                                        'bg-slate-800 text-slate-400 border border-slate-700'
+                                    }">${item.status}</span>
                                 </td>
-                                <td class="p-3 font-mono text-center">${item.weeklyPoints}</td>
-                                <td class="p-3">
-                                    <span class="text-xs ${item.quota === 'COMPLETE' ? 'text-emerald-400 font-semibold' : 'text-slate-400'}">${item.quota}</span>
-                                </td>
-                                <td class="p-3 text-xs font-mono">${item.warnings} / ${item.strikes}</td>
+                                <td class="p-3 font-mono">${item.weeklyPoints}</td>
+                                <td class="p-3 text-xs font-semibold ${item.quota === 'COMPLETE' ? 'text-emerald-400' : 'text-amber-400'}">${item.quota}</td>
+                                <td class="p-3 text-xs">${item.warnings} / ${item.strikes}</td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -525,6 +525,7 @@
             document.getElementById('cadet-dashboard').classList.add('hidden');
             document.getElementById('staff-dashboard').classList.add('hidden');
             document.getElementById('user-status').classList.add('hidden');
+            document.getElementById('user-status').classList.remove('flex');
             document.getElementById('login-section').classList.remove('hidden');
         }
     </script>
